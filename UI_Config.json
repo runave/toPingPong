@@ -1,0 +1,101 @@
+﻿{
+  "output_file": "settings.json",
+  "onlyWhenLive": {
+    "type": "checkbox",
+    "value": true,
+    "label": "Only when live",
+    "tooltip": "Enable commands only when stream is live",
+    "group": "General"
+  },
+  "pingCommand": {
+    "type": "textbox",
+    "value": "!ping",
+    "label": "Ping command",
+    "tooltip": "Command for serving the TO ball",
+    "group": "General"
+  },
+  "pingCost": {
+    "type": "numberbox",
+    "value": 50,
+    "label": "Ping cost",
+    "tooltip": "Cost of serving the TO ball",
+    "group": "General"
+  },
+  "pongCommand": {
+    "type": "textbox",
+    "value": "!pong",
+    "label": "Pong command",
+    "tooltip": "Command for returning the TO ball",
+    "group": "General"
+  },
+  "pongCost": {
+    "type": "numberbox",
+    "value": 100,
+    "label": "Pong cost",
+    "tooltip": "Cost of returning the TO ball",
+    "group": "General"
+  },
+  "pongTime": {
+    "type": "numberbox",
+    "value": 60,
+    "label": "Pong time",
+    "tooltip": "Time to wait for the target to return the TO ball, in seconds",
+    "group": "General"
+  },
+  "pingModCommand": {
+    "type": "textbox",
+    "value": "!ping",
+    "label": "Ping command (target is mod)",
+    "tooltip": "Command for serving the TO ball to a moderator",
+    "group": "General"
+  },
+  "pingModCost": {
+    "type": "numberbox",
+    "value": 500,
+    "label": "Ping cost (target is mod)",
+    "tooltip": "Cost of serving the TO ball to a moderator",
+    "group": "General"
+  },
+  "pingResponse": {
+    "type": "textbox",
+    "value": "$user served the TO ball to $target! Type $command in $seconds seconds to return it back!",
+    "label": "Ping response",
+    "tooltip": "Response when serving the TO ball succeeded, parameters: $user = user, $target = target, $command = command for returning the TO ball, $seconds = seconds to wait for returning the TO ball",
+    "group": "Responses"
+  },
+  "pongResponse": {
+    "type": "textbox",
+    "value": "$user returned the TO ball to $target! Type $command in $seconds seconds to return it back!",
+    "label": "Ping response",
+    "tooltip": "Response when returning the TO ball succeeded, parameters: $user = user, $target = target, $command = command for returning the TO ball, $seconds = seconds to wait for returning the TO ball",
+    "group": "Responses"
+  },
+  "winResponse": {
+    "type": "textbox",
+    "value": "$user won the TO ping-pong game against $target!",
+    "label": "Win response",
+    "tooltip": "Win response, parameters: $user = the winner, $target = the loser",
+    "group": "Responses"
+  },
+  "loseResponse": {
+    "type": "textbox",
+    "value": "/timeout $target",
+    "label": "Lose response",
+    "tooltip": "Lose response = /timeout the loser, parameters: $target = the loser",
+    "group": "Responses"
+  },
+  "noPointsResponse": {
+    "type": "textbox",
+    "value": "$user, you need more points ($cost) to do that!",
+    "label": "No points response",
+    "tooltip": "Response when the user does not have enough points, parameters: $user = user, $cost = how much points are needed",
+    "group": "Responses"
+  },
+  "noTargetResponse": {
+    "type": "textbox",
+    "value": "$user, who do you want to serve the TO ball to?",
+    "label": "No target response",
+    "tooltip": "Response when the user did not specify a target for the ping command, parameters: $user = user",
+    "group": "Responses"
+  }
+}
