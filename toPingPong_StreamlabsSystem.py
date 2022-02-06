@@ -8,16 +8,10 @@ import time
 ScriptName = "toPingPong"
 Website = "https://github.com/runave/toPingPong"
 Creator = "runave"
-Version = "0.1"
+Version = "0.2"
 Description = "Ping-pong for life and death"
 
 settingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
-
-# TODO backfire when used on caster or the bot?
-# TODO auto re-mod after TO expires on mods
-# TODO limit how many times the same person may get TO during a stream session
-# TODO special ping command / cost when target is vip
-# TODO dedicated ping command / cost for specific persons
 
 class Settings:
   def __init__(self, settingsFile=None):
@@ -26,6 +20,7 @@ class Settings:
         self.__dict__ = json.load(f, encoding='utf-8-sig')
     else:
       self.onlyWhenLive = True
+      self.protectedCooldown = 1800
       self.pingCommand = "!ping"
       self.pingCost = 50
       self.pongCommand = "!pong"
@@ -39,6 +34,7 @@ class Settings:
       self.pongResponse = "$user returned the TO ball to $target! Type $command in $seconds seconds to return it back!"
       self.winResponse = "$user won the TO ping-pong game against $target!"
       self.loseResponse = "/timeout $target"
+      self.protectedResponse = "$user tried to serve the TO ball to $target but it did not land on the table!"
 
   def Reload(self, data):
     self.__dict__ = json.loads(data, encoding='utf-8-sig')
@@ -106,6 +102,8 @@ def Tick():
       del state[target]
       SendResponse(settings.winResponse, {"$user": Parent.GetDisplayName(data.user), "$target": Parent.GetDisplayName(target)})
       SendResponse(settings.loseResponse, {"$target": target})
+      if settings.protectedCooldown > 0:
+        Parent.AddUserCooldown(ScriptName, "protected", target, settings.protectedCooldown)
   return
 
 def Execute(data):
@@ -141,7 +139,8 @@ def Execute(data):
           if not command == settings.pingModCommand.lower():
             return # wrong command
           cost = settings.pingModCost
-        if AlreadyPlaying(data.User) or AlreadyPlaying(target):
+        if AlreadyPlaying(data.User) or AlreadyPlaying(target) or Parent.IsOnUserCooldown(ScriptName, "protected", target):
+          SendResponse(settings.protectedResponse, {"$user": data.UserName, "$target": Parent.GetDisplayName(target)})
           return
         if not PayCost(data, cost):
           return

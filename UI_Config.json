@@ -7,6 +7,13 @@
     "tooltip": "Enable commands only when stream is live",
     "group": "General"
   },
+  "protectedCooldown": {
+    "type": "numberbox",
+    "value": 1800,
+    "label": "Protected cooldown",
+    "tooltip": "For how many seconds the loser is protected after losing",
+    "group": "General"
+  },
   "pingCommand": {
     "type": "textbox",
     "value": "!ping",
@@ -96,6 +103,13 @@
     "value": "$user, who do you want to serve the TO ball to?",
     "label": "No target response",
     "tooltip": "Response when the user did not specify a target for the ping command, parameters: $user = user",
+    "group": "Responses"
+  },
+  "protectedResponse": {
+    "type": "textbox",
+    "value": "$user tried to serve the TO ball to $target but it did not land on the table!",
+    "label": "Protected response",
+    "tooltip": "Response when the user cannot serve the TO ball to the target (either already playing or protected after losing), parameters: $user = user, $target = target",
     "group": "Responses"
   }
 }
