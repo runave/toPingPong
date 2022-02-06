@@ -14,7 +14,6 @@ Description = "Ping-pong for life and death"
 settingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
 
 # TODO backfire when used on caster or the bot?
-# TODO check if ping command target is in the chat?
 # TODO auto re-mod after TO expires on mods
 # TODO limit how many times the same person may get TO during a stream session
 # TODO special ping command / cost when target is vip
@@ -134,6 +133,8 @@ def Execute(data):
           SendResponse(settings.noTargetResponse, {"$user": data.UserName})
           return
         if target == data.User:
+          return
+        if target not in Parent.GetViewerList() and target not in Parent.GetActiveUsers():
           return
         cost = settings.pingCost
         if Parent.HasPermission(target, "Moderator", ""):
