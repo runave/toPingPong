@@ -8,7 +8,7 @@ import time
 ScriptName = "toPingPong"
 Website = "https://github.com/runave/toPingPong"
 Creator = "runave"
-Version = "0.2"
+Version = "0.3"
 Description = "Ping-pong for life and death"
 
 settingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
@@ -127,6 +127,8 @@ def Execute(data):
     if command == settings.pingCommand.lower() or command == settings.pingModCommand.lower():
       if not settings.onlyWhenLive or Parent.IsLive():
         target = data.GetParam(1).lower()
+        if target and target[0] == '@':
+          target = target[1:] # remove @ prefix from target name
         if not target:
           SendResponse(settings.noTargetResponse, {"$user": data.UserName})
           return
