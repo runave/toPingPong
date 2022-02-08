@@ -15,26 +15,30 @@ settingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
 
 class Settings:
   def __init__(self, settingsFile=None):
+    self.onlyWhenLive = True
+    self.protectedCooldown = 1800
+    self.minTimeout = 600
+    self.maxTimeout = 900
+    self.incrChance = 20
+    self.incrTimeout = 60
+    self.pingCommand = "!ping"
+    self.pingCost = 50
+    self.pongCommand = "!pong"
+    self.pongCost = 100
+    self.pongTime = 60
+    self.pingModCommand = "!ping"
+    self.pingModCost = 500
+    self.noPointsResponse = "$user, you need more points ($cost) to do that!"
+    self.noTargetResponse = "$user, who do you want to serve the TO ball to?"
+    self.pingResponse = "$user served the TO ball to $target! Type $command in $seconds seconds to return it back!"
+    self.pongResponse = "$user returned the TO ball to $target! Type $command in $seconds seconds to return it back!"
+    self.pongIncrResponse = "$user returned the TO ball to $target with extreme spin, causing a slight increase in TO! Type $command in $seconds seconds to return it back!"
+    self.winResponse = "$user won the TO ping-pong game against $target!"
+    self.protectedResponse = "$user tried to serve the TO ball to $target but it did not land on the table!"
+    self.timeoutCommand = "/timeout $target $seconds"
     if settingsFile and os.path.isfile(settingsFile):
       with codecs.open(settingsFile, encoding='utf-8-sig', mode='r') as f:
-        self.__dict__ = json.load(f, encoding='utf-8-sig')
-    else:
-      self.onlyWhenLive = True
-      self.protectedCooldown = 1800
-      self.pingCommand = "!ping"
-      self.pingCost = 50
-      self.pongCommand = "!pong"
-      self.pongCost = 100
-      self.pongTime = 60
-      self.pingModCommand = "!ping"
-      self.pingModCost = 500
-      self.noPointsResponse = "$user, you need more points ($cost) to do that!"
-      self.noTargetResponse = "$user, who do you want to serve the TO ball to?"
-      self.pingResponse = "$user served the TO ball to $target! Type $command in $seconds seconds to return it back!"
-      self.pongResponse = "$user returned the TO ball to $target! Type $command in $seconds seconds to return it back!"
-      self.winResponse = "$user won the TO ping-pong game against $target!"
-      self.loseResponse = "/timeout $target"
-      self.protectedResponse = "$user tried to serve the TO ball to $target but it did not land on the table!"
+        self.__dict__.update(json.load(f, encoding='utf-8-sig'))
 
   def Reload(self, data):
     self.__dict__ = json.loads(data, encoding='utf-8-sig')
@@ -49,9 +53,10 @@ class Settings:
       Parent.Log(ScriptName, "Failed to save settings to file.")
 
 class State:
-  def __init__(self, user):
+  def __init__(self, user, timeout):
     self.user = user
     self.startTime = time.time()
+    self.timeout = timeout
 
 def SendResponse(msg, msgParams):
   if msg:
@@ -101,7 +106,7 @@ def Tick():
     if now - data.startTime > settings.pongTime:
       del state[target]
       SendResponse(settings.winResponse, {"$user": Parent.GetDisplayName(data.user), "$target": Parent.GetDisplayName(target)})
-      SendResponse(settings.loseResponse, {"$target": target})
+      SendResponse(settings.timeoutCommand, {"$target": target, "$seconds": str(data.timeout)})
       if settings.protectedCooldown > 0:
         Parent.AddUserCooldown(ScriptName, "protected", target, settings.protectedCooldown)
   return
@@ -119,9 +124,16 @@ def Execute(data):
           if not PayCost(data, settings.pongCost):
             return
           target = state[data.User].user
+          timeout = state[data.User].timeout
+          incrCond = settings.incrChance > 0 and timeout < settings.maxTimeout and settings.incrChance >= Parent.GetRandom(1, 100)
+          if incrCond:
+            # lets slightly increase the timeout
+            timeout = timeout + settings.incrTimeout
+            if timeout > settings.maxTimeout:
+              timeout = settings.maxTimeout
           del state[data.User]
-          state[target] = State(data.User)
-          SendResponse(settings.pongResponse, {"$user": data.UserName, "$target": Parent.GetDisplayName(target), "$command": settings.pongCommand, "$seconds": str(settings.pongTime)})
+          state[target] = State(data.User, timeout)
+          SendResponse(settings.pongIncrResponse if incrCond else settings.pongResponse, {"$user": data.UserName, "$target": Parent.GetDisplayName(target), "$command": settings.pongCommand, "$seconds": str(settings.pongTime)})
           return
 
     if command == settings.pingCommand.lower() or command == settings.pingModCommand.lower():
@@ -146,7 +158,7 @@ def Execute(data):
           return
         if not PayCost(data, cost):
           return
-        state[target] = State(data.User)
+        state[target] = State(data.User, settings.minTimeout)
         SendResponse(settings.pingResponse, {"$user": data.UserName, "$target": Parent.GetDisplayName(target), "$command": settings.pongCommand, "$seconds": str(settings.pongTime)})
         return
 

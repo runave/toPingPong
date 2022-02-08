@@ -14,6 +14,37 @@
     "tooltip": "For how many seconds the loser is protected after losing",
     "group": "General"
   },
+  "minTimeout": {
+    "type": "numberbox",
+    "value": 600,
+    "label": "Min value of TO",
+    "tooltip": "For how many seconds the loser gets the TO (when not increased)",
+    "group": "General"
+  },
+  "maxTimeout": {
+    "type": "numberbox",
+    "value": 900,
+    "label": "Max value of TO",
+    "tooltip": "For how many seconds the loser gets the TO (when increased to the maximum)",
+    "group": "General"
+  },
+  "incrChance": {
+    "type": "slider",
+    "value": 20,
+    "min": 0,
+    "max": 100,
+    "ticks": 5,
+    "label": "Chance to increase the TO",
+    "tooltip": "The chance to increase the TO when the ball is returned to the opponent (0..100 %)",
+    "group": "General"
+  },
+  "incrTimeout": {
+    "type": "numberbox",
+    "value": 60,
+    "label": "Increase in TO",
+    "tooltip": "By how many seconds the TO might increase when the ball is returned to the opponent",
+    "group": "General"
+  },
   "pingCommand": {
     "type": "textbox",
     "value": "!ping",
@@ -73,8 +104,15 @@
   "pongResponse": {
     "type": "textbox",
     "value": "$user returned the TO ball to $target! Type $command in $seconds seconds to return it back!",
-    "label": "Ping response",
+    "label": "Pong response",
     "tooltip": "Response when returning the TO ball succeeded, parameters: $user = user, $target = target, $command = command for returning the TO ball, $seconds = seconds to wait for returning the TO ball",
+    "group": "Responses"
+  },
+  "pongIncrResponse": {
+    "type": "textbox",
+    "value": "$user returned the TO ball to $target with extreme spin, causing a slight increase in TO! Type $command in $seconds seconds to return it back!",
+    "label": "Pong response (TO increased)",
+    "tooltip": "Response when returning the TO ball succeeded and TO is increased, parameters: $user = user, $target = target, $command = command for returning the TO ball, $seconds = seconds to wait for returning the TO ball",
     "group": "Responses"
   },
   "winResponse": {
@@ -82,13 +120,6 @@
     "value": "$user won the TO ping-pong game against $target!",
     "label": "Win response",
     "tooltip": "Win response, parameters: $user = the winner, $target = the loser",
-    "group": "Responses"
-  },
-  "loseResponse": {
-    "type": "textbox",
-    "value": "/timeout $target",
-    "label": "Lose response",
-    "tooltip": "Lose response = /timeout the loser, parameters: $target = the loser",
     "group": "Responses"
   },
   "noPointsResponse": {
@@ -111,5 +142,12 @@
     "label": "Protected response",
     "tooltip": "Response when the user cannot serve the TO ball to the target (either already playing or protected after losing), parameters: $user = user, $target = target",
     "group": "Responses"
+  },
+  "timeoutCommand": {
+    "type": "textbox",
+    "value": "/timeout $target $seconds",
+    "label": "Timeout command",
+    "tooltip": "The command executed when the loser gets the TO, parameters: $target = the loser, $seconds = for how many seconds the loser gets the TO",
+    "group": "Commands"
   }
 }
